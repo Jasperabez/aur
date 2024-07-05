@@ -4,19 +4,29 @@ pkgname=mbed-studio-bin
 _archivename=MbedStudio
 _binname=${pkgname%%-bin}
 DOMAIN="https://studio.mbed.com"
-ARCHIVE_PATH="/installers/release-1.4.5/1.4.5.d5955e24/linux/MbedStudio.tar.gz"
-pkgver=1.4.5
-pkgrel=14
+INSTALLER_PATH="/installers/latest/linux/MbedStudio.sh"
+pkgver=latest
+pkgrel=15
 pkgdesc="free IDE and toolchain for Mbed OS 5 application and library development"
 arch=('x86_64')
 url="https://os.mbed.com/studio/"
 license=('COMMERCIAL')
-depends=('ncurses5-compat-libs' 'gnome-keyring')
+depends=('ncurses' 'gnome-keyring' 'fuse2' 'alsa-lib' 'nss')
 provides=('mbed-studio')
 options=(!strip)
-source=("$DOMAIN$ARCHIVE_PATH"
+source=("$_archivename-official-installer.sh::$DOMAIN$INSTALLER_PATH"
 "$pkgname.sh"
 "$pkgname.install")
+
+prepare() {
+    cd "$srcdir"
+    # find archive path
+    ARCHIVE_PATH=$(grep -oP '(?<=ARCHIVE_PATH=).*' $_archivename-official-installer.sh)
+
+    # download archive
+    msg2 "Downloading... $DOMAIN$ARCHIVE_PATH"
+    curl -L -o "$_archivename.tar.gz" "$DOMAIN$ARCHIVE_PATH"
+}
 
 package() {
 	cd "$srcdir"
@@ -75,6 +85,6 @@ package() {
 	chmod +x "$EXEC_PATH"
 }
 
-md5sums=('be7dfb7b3dfda5a35c4552d6e255e33d'
+md5sums=('SKIP'
          'ba5f16b0d7eeef5b124cd68078a38672'
          '7cf4ae1f6777f0c610125a59b0fefca6')
