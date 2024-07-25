@@ -31,7 +31,9 @@ prepare() {
 package() {
 	cd "$srcdir"
 	msg2 "Extracting..."
-	
+
+    tar -xzf "$_archivename.tar.gz"
+
 	INSTALL_PATH="$pkgdir/usr/share/$pkgname"
     TOOLS_PATH="$INSTALL_PATH/mbed-studio-tools"
     LAUNCHER_PATH="$pkgdir/usr/share/applications"
@@ -39,18 +41,18 @@ package() {
     BIN_PATH="$INSTALL_PATH/bin"
     #EXEC_PATH contain a modified bash file checks if mbed-studio-tools exist in user .config before running mbed-studio else symlink
     EXEC_PATH="$pkgdir/usr/bin/$pkgname"
-    
+
     # move the tools where needed
     mkdir -p "$INSTALL_PATH"
     cp -r "$_archivename/$_binname-tools" "$INSTALL_PATH"
     chmod -R 755 "$TOOLS_PATH/ac6"
-    
+
     # copy tools.json where needed
     install -D "$_archivename/tools.json" "$TOOLS_PATH/tools.json"
-    
+
     # move the application where needed
     install -D "$_archivename/$_binname" "$INSTALL_PATH/$_binname"
-    
+
     # move bash runfile (custom) where needed
     install -D "$pkgname.sh" "$pkgdir/usr/bin/$pkgname"
 
